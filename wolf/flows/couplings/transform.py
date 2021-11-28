@@ -63,8 +63,9 @@ class Affine(Transform):
     @overrides
     def fwd(z: torch.Tensor, params) -> Tuple[torch.Tensor, torch.Tensor]:
         mu, scale = params
-        z = scale * z + mu
-        logdet = scale.log().view(z.size(0), -1).sum(dim=1)
+        with torch.no_grad():
+            z = scale * z + mu
+            logdet = scale.log().view(z.size(0), -1).sum(dim=1)
         return z, logdet
 
     @staticmethod
