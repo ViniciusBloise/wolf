@@ -53,6 +53,7 @@ class Affine(Transform):
         self.alpha = alpha
 
     @overrides
+    @torch.no_grad()
     def calc_params(self, params):
         mu, log_scale = params.chunk(2, dim=self.dim)
         scale = log_scale.mul_(0.5).tanh_().mul(self.alpha).add(1.0)
