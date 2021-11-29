@@ -55,17 +55,17 @@ class Affine(Transform):
     @overrides
     def calc_params(self, params):
         mu, log_scale = params.chunk(2, dim=self.dim)
-        with torch.no_grad():
-            scale = log_scale.mul_(0.5).tanh_().mul(self.alpha).add(1.0)
+
+        scale = log_scale.mul_(0.5).tanh_().mul_(self.alpha).add_(1.0)
         return mu, scale
 
     @staticmethod
     @overrides
     def fwd(z: torch.Tensor, params) -> Tuple[torch.Tensor, torch.Tensor]:
         mu, scale = params
-        with torch.no_grad():
-            z = scale * z + mu
-            logdet = scale.log().view(z.size(0), -1).sum(dim=1)
+
+        z = scale * z + mu
+        logdet = scale.log().view(z.size(0), -1).sum(dim=1)
         return z, logdet
 
     @staticmethod
